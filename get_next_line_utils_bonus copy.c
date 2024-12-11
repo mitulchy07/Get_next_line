@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mshariar <mshariar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hchowdhu <hchowdhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/12 17:51:34 by mshariar          #+#    #+#             */
-/*   Updated: 2024/11/12 17:53:27 by mshariar         ###   ########.fr       */
+/*   Created: 2024/12/09 17:50:03 by hchowdhu          #+#    #+#             */
+/*   Updated: 2024/12/11 20:22:40 by hchowdhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

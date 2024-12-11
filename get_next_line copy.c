@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mshariar <mshariar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hchowdhu <hchowdhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/12 17:51:09 by mshariar          #+#    #+#             */
-/*   Updated: 2024/11/12 18:11:15 by mshariar         ###   ########.fr       */
+/*   Created: 2024/12/09 17:50:12 by hchowdhu          #+#    #+#             */
+/*   Updated: 2024/12/11 20:58:52 by hchowdhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line_bonus.h"
+#include "get_next_line.h"
 
 char	*get_lines(char *str)
 {
 	int		i;
-	char	*s;
+	char	*allocated_str;
 
 	i = 0;
 	if (!str[i])
@@ -24,26 +24,26 @@ char	*get_lines(char *str)
 		i++;
 	if (str[i] == '\n')
 		i++;
-	s = (char *)malloc(sizeof(char) * (i + 1));
-	if (!s || !str)
+	allocated_str = (char *)malloc(sizeof(char) * (i + 1));
+	if (!allocated_str || !str)
 		return (NULL);
 	i = 0;
 	while (str[i] && str[i] != '\n')
 	{
-		s[i] = str[i];
+		allocated_str[i] = str[i];
 		i++;
 	}
 	if (str[i] == '\n')
-		s[i++] = '\n';
-	s[i] = '\0';
-	return (s);
+		allocated_str[i++] = '\n';
+	allocated_str[i] = '\0';
+	return (allocated_str);
 }
 
 char	*stock(char *str)
 {
 	int		i;
 	int		j;
-	char	*s;
+	char	*allocated_str;
 
 	i = 0;
 	while (str[i] && str[i] != '\n')
@@ -53,16 +53,16 @@ char	*stock(char *str)
 		free(str);
 		return (NULL);
 	}
-	s = (char *)malloc(sizeof(char) * (ft_strlen(str) - i + 1));
-	if (!s)
+	allocated_str = (char *)malloc(sizeof(char) * (ft_strlen(str) - i + 1));
+	if (!allocated_str)
 		return (free(str), NULL);
 	i++;
 	j = 0;
 	while (str[i])
-		s[j++] = str[i++];
-	s[j] = '\0';
+		allocated_str[j++] = str[i++];
+	allocated_str[j] = '\0';
 	free(str);
-	return (s);
+	return (allocated_str);
 }
 
 char	*read_and_append(int fd, char *str)
@@ -93,20 +93,20 @@ char	*read_and_append(int fd, char *str)
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*str[2048];
+	static char	*str;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || fd > 2048)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (0);
-	str[fd] = read_and_append(fd, str[fd]);
-	if (!str[fd])
+	str = read_and_append(fd, str);
+	if (!str)
 		return (NULL);
-	line = get_lines(str[fd]);
+	line = get_lines(str);
 	if (!line)
 	{
-		free (str[fd]);
-		str[fd] = NULL;
+		free(str);
+		str = NULL;
 		return (NULL);
 	}
-	str[fd] = stock(str[fd]);
+	str = stock(str);
 	return (line);
 }
