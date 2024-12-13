@@ -6,63 +6,37 @@
 /*   By: hchowdhu <hchowdhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 17:50:12 by hchowdhu          #+#    #+#             */
-/*   Updated: 2024/12/11 20:58:52 by hchowdhu         ###   ########.fr       */
+/*   Updated: 2024/12/13 22:13:10 by hchowdhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*get_lines(char *str)
+char	*extract_and_update(char **str)
 {
+	char	*line;
+	char	*remaining;
 	int		i;
-	char	*allocated_str;
 
 	i = 0;
-	if (!str[i])
+	if (!str || !*str || !(*str)[0])
 		return (NULL);
-	while (str[i] && str[i] != '\n')
+	while ((*str)[i] && (*str)[i] != '\n')
 		i++;
-	if (str[i] == '\n')
+	if ((*str)[i] == '\n')
 		i++;
-	allocated_str = (char *)malloc(sizeof(char) * (i + 1));
-	if (!allocated_str || !str)
+	line = (char *)malloc(sizeof(char) * (i + 1));
+	if (!line)
 		return (NULL);
-	i = 0;
-	while (str[i] && str[i] != '\n')
-	{
-		allocated_str[i] = str[i];
-		i++;
-	}
-	if (str[i] == '\n')
-		allocated_str[i++] = '\n';
-	allocated_str[i] = '\0';
-	return (allocated_str);
-}
-
-char	*stock(char *str)
-{
-	int		i;
-	int		j;
-	char	*allocated_str;
-
-	i = 0;
-	while (str[i] && str[i] != '\n')
-		i++;
-	if (!str[i] || !str)
-	{
-		free(str);
-		return (NULL);
-	}
-	allocated_str = (char *)malloc(sizeof(char) * (ft_strlen(str) - i + 1));
-	if (!allocated_str)
-		return (free(str), NULL);
-	i++;
-	j = 0;
-	while (str[i])
-		allocated_str[j++] = str[i++];
-	allocated_str[j] = '\0';
-	free(str);
-	return (allocated_str);
+	strncpy(line, *str, i);
+	line[i] = '\0';
+	if ((*str)[i])
+		remaining = strdup(*str + i);
+	else
+		remaining = NULL;
+	free(*str);
+	*str = remaining;
+	return (line);
 }
 
 char	*read_and_append(int fd, char *str)
@@ -78,13 +52,11 @@ char	*read_and_append(int fd, char *str)
 	{
 		read_bytes = read(fd, buff, BUFFER_SIZE);
 		if (read_bytes < 0)
-		{
-			free(str);
-			free(buff);
-			return (NULL);
-		}
+			return (free(str), free(buff), NULL);
 		buff[read_bytes] = '\0';
 		str = ft_strjoin(str, buff);
+		if (!str)
+			return (free(str), free(buff), NULL);
 	}
 	free(buff);
 	return (str);
@@ -93,20 +65,18 @@ char	*read_and_append(int fd, char *str)
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*str;
+	static char	*str[2048];
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (0);
-	str = read_and_append(fd, str);
-	if (!str)
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd > 2048)
 		return (NULL);
-	line = get_lines(str);
+	str[fd] = read_and_append(fd, str[fd]);
+	if (!str[fd])
+		return (NULL);
+	line = extract_and_update(&str[fd]);
 	if (!line)
 	{
-		free(str);
-		str = NULL;
-		return (NULL);
+		free(str[fd]);
+		str[fd] = NULL;
 	}
-	str = stock(str);
 	return (line);
 }

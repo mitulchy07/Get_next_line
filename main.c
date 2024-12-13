@@ -3,26 +3,56 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mshariar <mshariar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hchowdhu <hchowdhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/12 15:00:29 by mshariar          #+#    #+#             */
-/*   Updated: 2024/11/12 15:26:41 by mshariar         ###   ########.fr       */
+/*   Created: 2024/12/11 20:27:34 by hchowdhu          #+#    #+#             */
+/*   Updated: 2024/12/13 20:30:00 by hchowdhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*#include "get_next_line.h"
+#include "get_next_line.h"
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 int main()
 {
     int i = 0;
     int fd = open("test.txt", O_RDONLY);
-    char    *nextline;
+    int fd1 = open("test1.txt", O_RDONLY);
+    char *nextline = get_next_line(fd);
+    char *nextline1 = get_next_line(fd1);
 
-    while((nextline = get_next_line(fd)))
+    if (fd == -1 || fd1 == -1)
     {
-        printf("%s -> %d\n", nextline, i);
-        i++;
+        perror("There is an error in opening file.");
+        return 1;
     }
-    printf("%s\n", nextline);
-    free(nextline);
-}*/
+
+    while (1)
+    {
+        if (!nextline && !nextline1)
+            break;
+
+        if (nextline)
+        {
+            printf("File 1: %s\n", nextline);
+            free(nextline);
+            nextline = NULL;
+            i++;
+        }
+
+        if (nextline1)
+        {
+            printf("File 2: %s\n", nextline1);
+            free(nextline1);
+            nextline1 = NULL;
+            i++;
+        }
+    }
+
+    close(fd);
+    close(fd1);
+
+    return 0;
+}

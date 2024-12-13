@@ -6,63 +6,40 @@
 /*   By: hchowdhu <hchowdhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 17:49:55 by hchowdhu          #+#    #+#             */
-/*   Updated: 2024/12/11 20:20:27 by hchowdhu         ###   ########.fr       */
+/*   Updated: 2024/12/13 22:09:10 by hchowdhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
-char	*get_lines(char *str)
+char	*extract_and_update(char **str)
 {
+	char	*line;
+	char	*remaining;
 	int		i;
-	char	*s;
 
 	i = 0;
-	if (!str[i])
+	if (!str || !*str || !(*str)[0])
 		return (NULL);
-	while (str[i] && str[i] != '\n')
+	while ((*str)[i] && (*str)[i] != '\n')
 		i++;
-	if (str[i] == '\n')
+	if ((*str)[i] == '\n')
 		i++;
-	s = (char *)malloc(sizeof(char) * (i + 1));
-	if (!s || !str)
+	line = (char *)malloc(sizeof(char) * (i + 1));
+	if (!line)
 		return (NULL);
-	i = 0;
-	while (str[i] && str[i] != '\n')
-	{
-		s[i] = str[i];
-		i++;
-	}
-	if (str[i] == '\n')
-		s[i++] = '\n';
-	s[i] = '\0';
-	return (s);
-}
-
-char	*stock(char *str)
-{
-	int		i;
-	int		j;
-	char	*s;
-
-	i = 0;
-	while (str[i] && str[i] != '\n')
-		i++;
-	if (!str[i] || !str)
-	{
-		free(str);
-		return (NULL);
-	}
-	s = (char *)malloc(sizeof(char) * (ft_strlen(str) - i + 1));
-	if (!s)
-		return (free(str), NULL);
-	i++;
-	j = 0;
-	while (str[i])
-		s[j++] = str[i++];
-	s[j] = '\0';
-	free(str);
-	return (s);
+	strncpy(line, *str, i);
+	line[i] = '\0';
+	if ((*str)[i])
+		remaining = strdup(*str + i);
+	else
+		remaining = NULL;
+	free(*str);
+	*str = remaining;
+	return (line);
 }
 
 char	*read_and_append(int fd, char *str)
@@ -78,13 +55,11 @@ char	*read_and_append(int fd, char *str)
 	{
 		read_bytes = read(fd, buff, BUFFER_SIZE);
 		if (read_bytes < 0)
-		{
-			free(str);
-			free(buff);
-			return (NULL);
-		}
+			return (free(str), free(buff), NULL);
 		buff[read_bytes] = '\0';
 		str = ft_strjoin(str, buff);
+		if (!str)
+			return (free(str), free(buff), NULL);
 	}
 	free(buff);
 	return (str);
@@ -96,17 +71,15 @@ char	*get_next_line(int fd)
 	static char	*str[2048];
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || fd > 2048)
-		return (0);
+		return (NULL);
 	str[fd] = read_and_append(fd, str[fd]);
 	if (!str[fd])
 		return (NULL);
-	line = get_lines(str[fd]);
+	line = extract_and_update(&str[fd]);
 	if (!line)
 	{
-		free (str[fd]);
+		free(str[fd]);
 		str[fd] = NULL;
-		return (NULL);
 	}
-	str[fd] = stock(str[fd]);
 	return (line);
 }
