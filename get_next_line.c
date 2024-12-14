@@ -5,12 +5,30 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: hchowdhu <hchowdhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/09 17:50:12 by hchowdhu          #+#    #+#             */
-/*   Updated: 2024/12/13 22:13:10 by hchowdhu         ###   ########.fr       */
+/*   Created: 2024/12/13 22:20:28 by hchowdhu          #+#    #+#             */
+/*   Updated: 2024/12/14 22:53:10 by hchowdhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+char	*ft_strncpy(char *dest, char *src, unsigned int n)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (src[i] != 0 && i < n)
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	while (i < n)
+	{
+		dest[i] = '\0';
+		i++;
+	}
+	return (dest);
+}
 
 char	*extract_and_update(char **str)
 {
@@ -28,7 +46,7 @@ char	*extract_and_update(char **str)
 	line = (char *)malloc(sizeof(char) * (i + 1));
 	if (!line)
 		return (NULL);
-	strncpy(line, *str, i);
+	ft_strncpy(line, *str, i);
 	line[i] = '\0';
 	if ((*str)[i])
 		remaining = strdup(*str + i);

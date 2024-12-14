@@ -6,7 +6,7 @@
 /*   By: hchowdhu <hchowdhu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 17:49:59 by hchowdhu          #+#    #+#             */
-/*   Updated: 2024/12/11 20:21:45 by hchowdhu         ###   ########.fr       */
+/*   Updated: 2024/12/14 22:52:26 by hchowdhu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,8 @@
 # include "string.h"
 
 size_t	ft_strlen(char *str);
-char	*get_lines(char	*str);
+char	*ft_strncpy(char *dest, char *src, unsigned int n);
 char	*ft_strjoin(char *s1, char *s2);
-char	*stock(char	*str);
 char	*ft_strchr(char *s, int c);
 char	*get_next_line(int fd);
 char	*read_and_append(int fd, char *str);
